@@ -346,7 +346,7 @@ def run():
                                                  'Predicted Field', 'User Level', 'Actual Skills', 'Recommended Skills',
                                                  'Recommended Course'])
                 st.dataframe(df)
-                st.markdown(get_table_download_link(df,'User_Data.csv','Download Report'), unsafe_allow_html=True)
+                st.markdown(get_table_download_link(df,'User_Data.csv','Download Customers Report'), unsafe_allow_html=True)
                 ## Admin Side Data
                 query = 'select * from user_data;'
                 plot_data = pd.read_sql(query, connection)
@@ -356,7 +356,7 @@ def run():
                 print(labels)
                 values = plot_data.Predicted_Field.value_counts()
                 print(values)
-                st.subheader("**Pie-Chart for Predicted Field Recommendation**")
+                st.subheader("**Pie-Chart for Predicted Field Recommendations**")
                 fig = px.pie(df, values=values, names=labels, title='Predicted Field according to the Skills')
                 st.plotly_chart(fig)
 
