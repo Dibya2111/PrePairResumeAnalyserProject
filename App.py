@@ -107,6 +107,12 @@ def run():
     st.sidebar.markdown("# Choose User")
     activities = ["User", "Admin"]
     choice = st.sidebar.selectbox("Choose among the given options:", activities)
+
+    # Add 'Create Resume through our platform' link
+    st.sidebar.markdown("## Create Resume through our platform")
+    st.sidebar.markdown("[Click here to create your resume](https://dibya2111.github.io/PrePairAIResumeBuiderProject/introduce.html)")
+
+    # Developed by link
     link = '[©Developed by Dibya](https://www.linkedin.com/in/dibyajyoti-dash-ba12571aa/)'
     st.sidebar.markdown(link, unsafe_allow_html=True)
 
