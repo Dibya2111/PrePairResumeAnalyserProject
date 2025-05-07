@@ -14,15 +14,19 @@ from streamlit_tags import st_tags
 from PIL import Image
 import pymysql
 from Courses import ds_course,web_course,android_course,ios_course,uiux_course,resume_videos,interview_videos
-import pafy #for uploading youtube videos
+from yt_dlp import YoutubeDL
 import plotly.express as px #to create visualisations at the admin session
 import nltk
 nltk.download('stopwords')
 
 
-def fetch_yt_video(link):
-    video = pafy.new(link)
-    return video.title
+from yt_dlp import YoutubeDL
+
+def fetch_yt_video(url):
+    with YoutubeDL({'quiet': True}) as ydl:
+        info = ydl.extract_info(url, download=False)
+        return info.get("title", "Unknown title")
+
 
 def get_table_download_link(df,filename,text):
     """Generates a link allowing the data in a given panda dataframe to be downloaded
@@ -80,7 +84,7 @@ def course_recommender(course_list):
 
 #CONNECT TO DATABASE
 
-connection = pymysql.connect(host='localhost',user='root',password='(Add your password)',db='cv')
+connection = pymysql.connect(host='localhost',user='root',password='Kanhapreet@88',db='cv')
 cursor = connection.cursor()
 
 def insert_data(name,email,res_score,timestamp,no_of_pages,reco_field,cand_level,skills,recommended_skills,courses):
@@ -92,18 +96,18 @@ def insert_data(name,email,res_score,timestamp,no_of_pages,reco_field,cand_level
     connection.commit()
 
 st.set_page_config(
-   page_title="AI Resume Analyzer",
-   page_icon='./Logo/logo2.png',
+   page_title="PrePair.AI Resume Analyzer",
+   page_icon='./Logo/logo3.jpg',
 )
 def run():
     img = Image.open('./Logo/logo2.png')
     # img = img.resize((250,250))
     st.image(img)
-    st.title("AI Resume Analyser")
+    st.title("PrePair.AI Resume Analyser")
     st.sidebar.markdown("# Choose User")
     activities = ["User", "Admin"]
     choice = st.sidebar.selectbox("Choose among the given options:", activities)
-    link = '[©Developed by Dr,Briit](https://www.linkedin.com/in/mrbriit/)'
+    link = '[©Developed by Dibya](https://www.linkedin.com/in/dibyajyoti-dash-ba12571aa/)'
     st.sidebar.markdown(link, unsafe_allow_html=True)
 
 
@@ -129,7 +133,7 @@ def run():
                     """
     cursor.execute(table_sql)
     if choice == 'User':
-        st.markdown('''<h5 style='text-align: left; color: #021659;'> Upload your resume, and get smart recommendations</h5>''',
+        st.markdown('''<h5 style='text-align: left; color: #021659;'> Upload your resume, and get smart AI recommendations</h5>''',
                     unsafe_allow_html=True)
         pdf_file = st.file_uploader("Choose your Resume", type=["pdf"])
         if pdf_file is not None:
@@ -336,8 +340,8 @@ def run():
         ad_user = st.text_input("Username")
         ad_password = st.text_input("Password", type='password')
         if st.button('Login'):
-            if ad_user == 'briit' and ad_password == 'briit123':
-                st.success("Welcome Dr Briit !")
+            if ad_user == 'PrePairAI' and ad_password == 'PrePairAI@123':
+                st.success("Welcome Founders !")
                 # Display Data
                 cursor.execute('''SELECT*FROM user_data''')
                 data = cursor.fetchall()
@@ -352,19 +356,25 @@ def run():
                 plot_data = pd.read_sql(query, connection)
 
                 ## Pie chart for predicted field recommendations
-                labels = plot_data.Predicted_Field.unique()
-                print(labels)
-                values = plot_data.Predicted_Field.value_counts()
-                print(values)
-                st.subheader("**Pie-Chart for Predicted Field Recommendation**")
-                fig = px.pie(df, values=values, names=labels, title='Predicted Field according to the Skills')
+                # First, define the counts from your data
+                field_counts = plot_data['Predicted_Field'].value_counts().reset_index()
+                field_counts.columns = ['Predicted_Field', 'Count']
+
+                level_counts = plot_data['User_level'].value_counts().reset_index()
+                level_counts.columns = ['User_level', 'Count']
+
+                # Ensure all data is clean and doesn't contain bytes
+                field_counts = field_counts.applymap(lambda x: x.decode() if isinstance(x, bytes) else x)
+                level_counts = level_counts.applymap(lambda x: x.decode() if isinstance(x, bytes) else x)
+
+                # Plot Pie Chart for Predicted Field
+                fig = px.pie(field_counts, values='Count', names='Predicted_Field',
+                             title='Predicted Field according to the Skills')
                 st.plotly_chart(fig)
 
-                ### Pie chart for User's👨‍💻 Experienced Level
-                labels = plot_data.User_level.unique()
-                values = plot_data.User_level.value_counts()
-                st.subheader("**Pie-Chart for User's Experienced Level**")
-                fig = px.pie(df, values=values, names=labels, title="Pie-Chart📈 for User's👨‍💻 Experienced Level")
+                # Plot Pie Chart for User's Experienced Level
+                fig = px.pie(level_counts, values='Count', names='User_level',
+                            title="Pie-Chart📈 for User's👨‍💻 Experienced Level")
                 st.plotly_chart(fig)
 
 
