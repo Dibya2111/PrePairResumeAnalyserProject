@@ -80,7 +80,7 @@ def course_recommender(course_list):
 
 #CONNECT TO DATABASE
 
-connection = pymysql.connect(host='localhost',user='root',password='Kanhapreet@88',db='cv')
+connection = pymysql.connect(host='localhost',user='root',password='(Add your password)',db='cv')
 cursor = connection.cursor()
 
 def insert_data(name,email,res_score,timestamp,no_of_pages,reco_field,cand_level,skills,recommended_skills,courses):
@@ -92,8 +92,8 @@ def insert_data(name,email,res_score,timestamp,no_of_pages,reco_field,cand_level
     connection.commit()
 
 st.set_page_config(
-   page_title="PrePair.AI Resume Analyzer",
-   page_icon='./Logo/logo3.jpg',
+   page_title="AI Resume Analyzer",
+   page_icon='./Logo/logo2.png',
 )
 def run():
     img = Image.open('./Logo/logo2.png')
@@ -103,7 +103,7 @@ def run():
     st.sidebar.markdown("# Choose User")
     activities = ["User", "Admin"]
     choice = st.sidebar.selectbox("Choose among the given options:", activities)
-    link = '[©Developed by Dibya](https://www.linkedin.com/in/dibyajyoti-dash-ba12571aa/)'
+    link = '[©Developed by Dr,Briit](https://www.linkedin.com/in/mrbriit/)'
     st.sidebar.markdown(link, unsafe_allow_html=True)
 
 
@@ -129,7 +129,7 @@ def run():
                     """
     cursor.execute(table_sql)
     if choice == 'User':
-        st.markdown('''<h5 style='text-align: left; color: #021659;'> Upload your resume, and get smart recommendations Using Our AI</h5>''',
+        st.markdown('''<h5 style='text-align: left; color: #021659;'> Upload your resume, and get smart recommendations</h5>''',
                     unsafe_allow_html=True)
         pdf_file = st.file_uploader("Choose your Resume", type=["pdf"])
         if pdf_file is not None:
@@ -310,7 +310,7 @@ def run():
 
 
                 ## Resume writing video
-                st.header("**Bonus YouTube Video for Resume Writing Tips💡**")
+                st.header("**Bonus Video for Resume Writing Tips💡**")
                 resume_vid = random.choice(resume_videos)
                 res_vid_title = fetch_yt_video(resume_vid)
                 st.subheader("✅ **"+res_vid_title+"**")
@@ -319,7 +319,7 @@ def run():
 
 
                 ## Interview Preparation Video
-                st.header("**Bonus YouTube Video for Interview Tips💡**")
+                st.header("**Bonus Video for Interview Tips💡**")
                 interview_vid = random.choice(interview_videos)
                 int_vid_title = fetch_yt_video(interview_vid)
                 st.subheader("✅ **" + int_vid_title + "**")
@@ -336,8 +336,8 @@ def run():
         ad_user = st.text_input("Username")
         ad_password = st.text_input("Password", type='password')
         if st.button('Login'):
-            if ad_user == 'PrePair' and ad_password == 'PrePair@123':
-                st.success("Welcome Mr Dj !")
+            if ad_user == 'briit' and ad_password == 'briit123':
+                st.success("Welcome Dr Briit !")
                 # Display Data
                 cursor.execute('''SELECT*FROM user_data''')
                 data = cursor.fetchall()
@@ -346,7 +346,7 @@ def run():
                                                  'Predicted Field', 'User Level', 'Actual Skills', 'Recommended Skills',
                                                  'Recommended Course'])
                 st.dataframe(df)
-                st.markdown(get_table_download_link(df,'User_Data.csv','Download Customers Report'), unsafe_allow_html=True)
+                st.markdown(get_table_download_link(df,'User_Data.csv','Download Report'), unsafe_allow_html=True)
                 ## Admin Side Data
                 query = 'select * from user_data;'
                 plot_data = pd.read_sql(query, connection)
@@ -356,7 +356,7 @@ def run():
                 print(labels)
                 values = plot_data.Predicted_Field.value_counts()
                 print(values)
-                st.subheader("**Pie-Chart for Predicted Field Recommendations**")
+                st.subheader("**Pie-Chart for Predicted Field Recommendation**")
                 fig = px.pie(df, values=values, names=labels, title='Predicted Field according to the Skills')
                 st.plotly_chart(fig)
 
